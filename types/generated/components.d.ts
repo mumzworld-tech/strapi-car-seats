@@ -1,75 +1,142 @@
-import type { Struct, Schema } from '@strapi/strapi';
+import type { Schema, Struct } from '@strapi/strapi';
 
-export interface SharedSlider extends Struct.ComponentSchema {
-  collectionName: 'components_shared_sliders';
+export interface ContentAbout extends Struct.ComponentSchema {
+  collectionName: 'components_content_abouts';
   info: {
-    displayName: 'Slider';
-    icon: 'address-book';
-    description: '';
+    displayName: 'About';
   };
   attributes: {
-    files: Schema.Attribute.Media<'images', true>;
-  };
-}
-
-export interface SharedSeo extends Struct.ComponentSchema {
-  collectionName: 'components_shared_seos';
-  info: {
-    name: 'Seo';
-    icon: 'allergies';
-    displayName: 'Seo';
-    description: '';
-  };
-  attributes: {
-    metaTitle: Schema.Attribute.String & Schema.Attribute.Required;
-    metaDescription: Schema.Attribute.Text & Schema.Attribute.Required;
-    shareImage: Schema.Attribute.Media<'images'>;
-  };
-}
-
-export interface SharedRichText extends Struct.ComponentSchema {
-  collectionName: 'components_shared_rich_texts';
-  info: {
-    displayName: 'Rich text';
-    icon: 'align-justify';
-    description: '';
-  };
-  attributes: {
-    body: Schema.Attribute.RichText;
-  };
-}
-
-export interface SharedQuote extends Struct.ComponentSchema {
-  collectionName: 'components_shared_quotes';
-  info: {
-    displayName: 'Quote';
-    icon: 'indent';
-  };
-  attributes: {
+    description: Schema.Attribute.Text;
     title: Schema.Attribute.String;
-    body: Schema.Attribute.Text;
   };
 }
 
-export interface SharedMedia extends Struct.ComponentSchema {
-  collectionName: 'components_shared_media';
+export interface ContentCheckedList extends Struct.ComponentSchema {
+  collectionName: 'components_content_checked_lists';
   info: {
-    displayName: 'Media';
-    icon: 'file-video';
+    displayName: 'CheckedList';
   };
   attributes: {
-    file: Schema.Attribute.Media<'images' | 'files' | 'videos'>;
+    items: Schema.Attribute.Component<'content.list', true>;
+    title: Schema.Attribute.String;
+  };
+}
+
+export interface ContentCustomer extends Struct.ComponentSchema {
+  collectionName: 'components_content_customers';
+  info: {
+    displayName: 'Customer';
+  };
+  attributes: {
+    countryCode: Schema.Attribute.String;
+    email: Schema.Attribute.Email;
+    fullName: Schema.Attribute.Text;
+    phone: Schema.Attribute.String;
+  };
+}
+
+export interface ContentGallery extends Struct.ComponentSchema {
+  collectionName: 'components_content_galleries';
+  info: {
+    displayName: 'Gallery';
+  };
+  attributes: {
+    file: Schema.Attribute.Media<'images'>;
+    position: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    title: Schema.Attribute.String;
+  };
+}
+
+export interface ContentList extends Struct.ComponentSchema {
+  collectionName: 'components_content_lists';
+  info: {
+    displayName: 'List';
+  };
+  attributes: {
+    label: Schema.Attribute.String;
+  };
+}
+
+export interface ContentLocation extends Struct.ComponentSchema {
+  collectionName: 'components_content_locations';
+  info: {
+    displayName: 'Location';
+  };
+  attributes: {
+    address: Schema.Attribute.Text;
+    area: Schema.Attribute.String;
+    city: Schema.Attribute.String;
+    country: Schema.Attribute.Enumeration<['United Arab Emirates']>;
+  };
+}
+
+export interface ContentOurProcess extends Struct.ComponentSchema {
+  collectionName: 'components_content_our_processes';
+  info: {
+    displayName: 'OurProcess';
+  };
+  attributes: {
+    items: Schema.Attribute.Component<'content.process-step', true>;
+    title: Schema.Attribute.String;
+  };
+}
+
+export interface ContentProcessStep extends Struct.ComponentSchema {
+  collectionName: 'components_content_process_steps';
+  info: {
+    displayName: 'ProcessStep';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    image: Schema.Attribute.Media<'images'>;
+    title: Schema.Attribute.String;
+  };
+}
+
+export interface ContentServiceItem extends Struct.ComponentSchema {
+  collectionName: 'components_content_service_items';
+  info: {
+    displayName: 'ServiceItem';
+  };
+  attributes: {
+    currency: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images'>;
+    price: Schema.Attribute.Decimal;
+    serviceItemList: Schema.Attribute.Component<'content.list', true>;
+    title: Schema.Attribute.String;
+  };
+}
+
+export interface ContentServices extends Struct.ComponentSchema {
+  collectionName: 'components_content_services';
+  info: {
+    displayName: 'Services';
+  };
+  attributes: {
+    serviceItems: Schema.Attribute.Component<'content.service-item', true>;
+    title: Schema.Attribute.String;
   };
 }
 
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
-      'shared.slider': SharedSlider;
-      'shared.seo': SharedSeo;
-      'shared.rich-text': SharedRichText;
-      'shared.quote': SharedQuote;
-      'shared.media': SharedMedia;
+      'content.about': ContentAbout;
+      'content.checked-list': ContentCheckedList;
+      'content.customer': ContentCustomer;
+      'content.gallery': ContentGallery;
+      'content.list': ContentList;
+      'content.location': ContentLocation;
+      'content.our-process': ContentOurProcess;
+      'content.process-step': ContentProcessStep;
+      'content.service-item': ContentServiceItem;
+      'content.services': ContentServices;
     }
   }
 }

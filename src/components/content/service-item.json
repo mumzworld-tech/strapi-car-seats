@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_content_service_items",
+  "info": {
+    "displayName": "ServiceItem"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "currency": {
+      "type": "string"
+    },
+    "serviceItemList": {
+      "type": "component",
+      "component": "content.list",
+      "repeatable": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  },
+  "config": {}
+}
