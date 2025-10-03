@@ -175,7 +175,7 @@
         }
       }
     },
-    "maxQunatity": {
+    "maxQuantity": {
       "type": "integer",
       "pluginOptions": {
         "i18n": {

@@ -664,7 +664,7 @@ export interface ApiServiceService extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::service.service'
     >;
-    maxQunatity: Schema.Attribute.Integer &
+    maxQuantity: Schema.Attribute.Integer &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
