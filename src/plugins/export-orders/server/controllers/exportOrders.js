@@ -1,13 +1,17 @@
 export default {
   async index(ctx) {
     try {
-      const { startDate, endDate } = ctx.query || {};
+      const { startDate, endDate, preview } = ctx.query || {};
 
       const where = {};
       if (startDate && endDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
         where.createdAt = {
-          $gte: new Date(startDate),
-          $lte: new Date(endDate),
+          $gte: start,
+          $lte: end,
         };
       }
 
@@ -41,6 +45,13 @@ export default {
         if (o && !idToOrder.has(o.id)) idToOrder.set(o.id, o);
       }
       const uniqueOrders = Array.from(idToOrder.values());
+
+      if (preview) {
+        ctx.set("Content-Type", "application/json");
+        ctx.status = 200;
+        ctx.body = { count: uniqueOrders.length };
+        return;
+      }
 
       const rows = uniqueOrders.map((o) => ({
         orderId: o.orderId || "",
@@ -100,8 +111,11 @@ export default {
         .concat(rows.map((r) => headers.map((h) => escapeCell(r[h])).join(",")))
         .join("\n");
 
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-      const fileName = `orders_${startDate || "all"}_${endDate || "all"}_${timestamp}.csv`;
+      const now = new Date();
+      const two = (n) => String(n).padStart(2, "0");
+      const datePart = `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())}`;
+      const timePart = `${two(now.getHours())}:${two(now.getMinutes())}:${two(now.getSeconds())}`;
+      const fileName = `orders-${datePart}-${timePart}.csv`;
 
       ctx.set("Content-Disposition", `attachment; filename=${fileName}`);
       ctx.set("Content-Type", "text/csv; charset=utf-8");
