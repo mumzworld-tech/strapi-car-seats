@@ -32,6 +32,8 @@ export default {
         ],
         populate: {
           package: { fields: ["title"] },
+          customer: { fields: ["fullName", "email", "countryCode", "phone"] },
+          location: { fields: ["address", "city", "area", "country"] },
         },
         filters: {
           ...where,
@@ -114,7 +116,7 @@ export default {
       const now = new Date();
       const two = (n) => String(n).padStart(2, "0");
       const datePart = `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())}`;
-      const timePart = `${two(now.getHours())}:${two(now.getMinutes())}:${two(now.getSeconds())}`;
+      const timePart = `${two(now.getHours())}_${two(now.getMinutes())}_${two(now.getSeconds())}`;
       const fileName = `orders-${datePart}-${timePart}.csv`;
 
       ctx.set("Content-Disposition", `attachment; filename=${fileName}`);
