@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Box, Flex } from "@strapi/design-system";
 import { Download } from "@strapi/icons";
 import { DateRange } from "react-date-range";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
 
 const ExportOrdersButton = (props) => {
   const loc = useLocation();
