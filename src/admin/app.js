@@ -1,4 +1,5 @@
 import ExportOrdersButton from "./components/ExportOrdersButton";
+import DownloadInvoiceButton from "./components/DownloadInvoiceButton";
 import cssText from "./styles/date-range.css?inline";
 
 const config = {};
@@ -18,6 +19,18 @@ const bootstrap = (app) => {
   app.getPlugin("content-manager").injectComponent("listView", "actions", {
     name: "ExportOrdersButton",
     Component: ExportOrdersButton,
+  });
+  app.getPlugin("content-manager").injectComponent("editView", "actions", {
+    name: "DownloadInvoiceButton",
+    Component: DownloadInvoiceButton,
+  });
+  app.getPlugin("content-manager").injectComponent("editView", "header", {
+    name: "DownloadInvoiceButton",
+    Component: DownloadInvoiceButton,
+  });
+  app.getPlugin("content-manager").injectComponent("editView", "right-links", {
+    name: "DownloadInvoiceButton",
+    Component: DownloadInvoiceButton,
   });
 };
 
