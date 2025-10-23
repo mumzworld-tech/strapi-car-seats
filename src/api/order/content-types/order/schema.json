@@ -77,6 +77,14 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::customer.customer"
+    },
+    "requestStatus": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "cancelled",
+        "completed"
+      ]
     }
   }
 }
