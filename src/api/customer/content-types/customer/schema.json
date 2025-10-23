@@ -12,7 +12,7 @@
   "pluginOptions": {},
   "attributes": {
     "fullName": {
-      "type": "text"
+      "type": "string"
     },
     "email": {
       "type": "email"

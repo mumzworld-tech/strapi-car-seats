@@ -30,7 +30,7 @@ export interface ContentCustomer extends Struct.ComponentSchema {
   attributes: {
     countryCode: Schema.Attribute.String;
     email: Schema.Attribute.Email;
-    fullName: Schema.Attribute.Text;
+    fullName: Schema.Attribute.String;
     phone: Schema.Attribute.String;
   };
 }
