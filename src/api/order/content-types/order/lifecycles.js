@@ -35,19 +35,19 @@ module.exports = {
       return;
     }
 
-    const finalDocumentId = documentId || orderId?.toUpperCase();
-    const baseUrl = process.env.STRAPI_URL || 'http://localhost:1337';
-    const downloadLink = `${baseUrl}/download-invoice/download/${finalDocumentId}`;
+    const orderIdUpperCase = `#${orderId?.toUpperCase()}`;
+    const baseUrl = process.env.STRAPI_URL || "http://localhost:1337";
+    const downloadLink = `${baseUrl}/download-invoice/download/${documentId}`;
 
     const body = {
       ar: {
-        subject: `تم تأكيد طلب خدمتك في ممز وورلد 🎉`,
+        subject: `تم تأكيد طلب خدمتك ${orderIdUpperCase} في ممز وورلد 🎉`,
         text: `
           ،${customer.fullName} أهلًا
 
           .شكرًا لاختيارك خدمات الأمهات على ممزورلد
 
-          .يسعدنا إبلاغك بأن طلب الخدمة رقم #${finalDocumentId} قد تم تأكيده بنجاح
+          .يسعدنا إبلاغك بأن طلب الخدمة رقم ${orderIdUpperCase} قد تم تأكيده بنجاح
 
           .يمكنك تحميل فاتورتك من هنا: ${downloadLink}
 
@@ -65,7 +65,7 @@ module.exports = {
 
               .شكرًا لاختيارك خدمات الأمهات على ممزورلد<br/><br/>
 
-              .يسعدنا إبلاغك بأن طلب الخدمة رقم #${finalDocumentId} قد تم تأكيده بنجاح<br/><br/>
+              .يسعدنا إبلاغك بأن طلب الخدمة رقم ${orderIdUpperCase} قد تم تأكيده بنجاح<br/><br/>
 
               <a href="${downloadLink}">تحميل الفاتورة</a><br/><br/>
 
@@ -80,13 +80,13 @@ module.exports = {
         `,
       },
       en: {
-        subject: `Your Mumzworld Service Order is Confirmed 🎉`,
+        subject: `Your Mumzworld Service Order ${orderIdUpperCase} is Confirmed 🎉`,
         text: `
             Dear ${customer.fullName},\n\n
 
             Thank you for booking your service with Mumzworld.
 
-            We're happy to let you know that your service order #${finalDocumentId} has been successfully confirmed.
+            We're happy to let you know that your service order ${orderIdUpperCase} has been successfully confirmed.
 
             Please find attached the invoice for your order, or download it here: ${downloadLink}
 
@@ -104,7 +104,7 @@ module.exports = {
 
               Thank you for booking your service with Mumzworld.<br/><br/>
 
-              We're happy to let you know that your service order #${finalDocumentId} has been successfully confirmed.<br/><br/>
+              We're happy to let you know that your service order ${orderIdUpperCase} has been successfully confirmed.<br/><br/>
 
               <a href="${downloadLink}">Download Invoice</a><br/><br/>
 
@@ -122,7 +122,7 @@ module.exports = {
 
     const internalEmailBody = {
       en: {
-        subject: `New booking alert - Car Seat Cleaning`,
+        subject: `New booking alert - Gear refresh - ${orderIdUpperCase}`,
         text: `
             Hello Team,
             A new booking has been successfully received and requires processing.
@@ -131,7 +131,7 @@ module.exports = {
 
             Booking ID: ${orderId}
 
-            Service: Car Seat Cleaning
+            Service: Gear refresh
 
             Customer Details:
 
@@ -159,7 +159,7 @@ module.exports = {
                 <b>Booking ID:</b> ${orderId}
                 </li>
                 <li>
-                <b>Service:</b> Car Seat Cleaning
+                <b>Service:</b> Gear refresh
                 </li>
               </ul>
 
@@ -189,7 +189,9 @@ module.exports = {
 
     try {
       // Generate invoice PDF for attachment
-      const pdfGenerator = strapi.plugin("download-invoice").service("pdfGenerator");
+      const pdfGenerator = strapi
+        .plugin("download-invoice")
+        .service("pdfGenerator");
       const orderData = pdfGenerator.prepareOrderData(currentOrder);
       const pdfPath = await pdfGenerator.generateInvoice(orderData, orderId);
 
@@ -197,11 +199,13 @@ module.exports = {
       const fs = require("fs").promises;
       const pdfBuffer = await fs.readFile(pdfPath);
 
-      const attachments = [{
-        filename: `invoice-${finalDocumentId}.pdf`,
-        content: pdfBuffer,
-        contentType: 'application/pdf'
-      }];
+      const attachments = [
+        {
+          filename: `invoice-${documentId}.pdf`,
+          content: pdfBuffer,
+          contentType: "application/pdf",
+        },
+      ];
 
       await strapi
         .plugin("email")

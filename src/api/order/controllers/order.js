@@ -6,8 +6,6 @@
 
 const { createCoreController } = require("@strapi/strapi").factories;
 
-const { customAlphabet } = require("nanoid");
-
 module.exports = createCoreController("api::order.order", ({ strapi }) => ({
   async create(ctx) {
     try {
@@ -20,27 +18,62 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         countryCode,
       });
 
-      const orderId = customAlphabet("1234567890abcdef", 10)();
-
       const { customer, ...rest } = ctx.request.body.data;
 
-      const data = await strapi.entityService.create("api::order.order", {
-        data: {
-          customerId: customerDetails.documentId,
-          customer: {
-            fullName: customerDetails.fullName,
-            email: customerDetails.email,
-            phone: customerDetails.phone,
-            countryCode: customerDetails.countryCode,
-          },
-          orderId,
-          ...rest,
-        },
-      });
+      // Generate order ID with retry logic
+      const generateUniqueOrderId = async (attempts = 0) => {
+        if (attempts > 3) {
+          throw new Error(
+            "Failed to generate unique order ID after 3 attempts"
+          );
+        }
 
-      return {
-        data,
+        const lastOrder = await strapi.entityService.findMany(
+          "api::order.order",
+          {
+            sort: { id: "desc" },
+            fields: ["orderId"],
+            limit: 1,
+          }
+        );
+
+        let orderId;
+        if (lastOrder.length > 0 && lastOrder[0].orderId?.startsWith("GR-")) {
+          const lastOrderId = lastOrder[0].orderId.split("-")[1];
+          orderId = `GR-${parseInt(lastOrderId) + 1}`;
+        } else {
+          orderId = `GR-915100`;
+        }
+
+        try {
+          const data = await strapi.entityService.create("api::order.order", {
+            data: {
+              customerId: customerDetails.documentId,
+              customer: {
+                fullName: customerDetails.fullName,
+                email: customerDetails.email,
+                phone: customerDetails.phone,
+                countryCode: customerDetails.countryCode,
+              },
+              orderId,
+              ...rest,
+            },
+          });
+          return data;
+        } catch (error) {
+          if (
+            error.message.includes("unique") ||
+            error.message.includes("duplicate")
+          ) {
+            return await generateUniqueOrderId(attempts + 1);
+          }
+          throw error;
+        }
       };
+
+      const data = await generateUniqueOrderId();
+
+      return { data };
     } catch (error) {
       console.error("Error creating order:", error);
       ctx.throw(500, "Failed to create order");

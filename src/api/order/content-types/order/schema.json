@@ -12,7 +12,8 @@
   "pluginOptions": {},
   "attributes": {
     "orderId": {
-      "type": "string"
+      "type": "string",
+      "unique": true
     },
     "package": {
       "type": "relation",
