@@ -28,21 +28,28 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
           );
         }
 
+        const prefix = "GR-";
+
+        // Using findOne in Strapi v5
         const lastOrder = await strapi.entityService.findMany(
           "api::order.order",
           {
-            sort: { id: "desc" },
-            fields: ["orderId"],
+            where: {
+              orderId: {
+                $startsWith: prefix,
+              },
+            },
+            sort: { orderId: "desc" },
             limit: 1,
           }
         );
 
         let orderId;
-        if (lastOrder.length > 0 && lastOrder[0].orderId?.startsWith("GR-")) {
+        if (lastOrder.length > 0 && lastOrder[0].orderId?.startsWith(prefix)) {
           const lastOrderId = lastOrder[0].orderId.split("-")[1];
-          orderId = `GR-${parseInt(lastOrderId) + 1}`;
+          orderId = `${prefix}${parseInt(lastOrderId) + 1}`;
         } else {
-          orderId = `GR-915100`;
+          orderId = `${prefix}915100`;
         }
 
         try {
